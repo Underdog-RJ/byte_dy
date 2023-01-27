@@ -1,0 +1,10 @@
+syntax="proto3";
+package services;
+option go_package="./;protos";
+
+message VideoModel{
+  // @inject_tag: json:"id"
+  uint32 ID=1;
+  // @inject_tag: json:"user_name"
+  string VideoTitle=2;
+}
