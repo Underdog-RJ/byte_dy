@@ -1,0 +1,6 @@
+mysql:
+  addr: 159.27.184.52
+  port: 6033
+  username: root
+  password: Zhangzhengxu123.
+  database: ByteQingXun
