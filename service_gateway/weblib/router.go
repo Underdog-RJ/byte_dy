@@ -14,7 +14,7 @@ func NewRouter(service ...interface{}) *gin.Engine {
 	ginRouter.Use(middleware.Cors(), middleware.InitMiddleware(service), middleware.ErrorMiddleware())
 	store := cookie.NewStore([]byte("something-very-secret"))
 	ginRouter.Use(sessions.Sessions("mysession", store))
-	v1 := ginRouter.Group("/api/v1")
+	v1 := ginRouter.Group("/douyin")
 	{
 		v1.GET("ping", func(context *gin.Context) {
 			context.JSON(200, "success")
@@ -24,10 +24,10 @@ func NewRouter(service ...interface{}) *gin.Engine {
 		v1.POST("/user/login", handlers.UserLogin)
 
 		// 需要登录保护
-		authed := v1.Group("/")
+		authed := v1.Group("/publish")
 		authed.Use(middleware.JWT())
 		{
-
+			authed.POST("/action", handlers.UploadVideo)
 		}
 	}
 	return ginRouter

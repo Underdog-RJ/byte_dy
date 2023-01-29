@@ -24,12 +24,19 @@ func main() {
 	// 用户服务调用实例
 	userService := services.NewUserService("rpcUserService", userMicroService.Client())
 
+	// 视频
+	videoMicroService := micro.NewService(
+		micro.Name("videoService.client"),
+		micro.WrapClient(wrappers.NewUserWrapper),
+	)
+	videoService := services.NewVideoService("rpcVideoService", videoMicroService.Client())
+
 	//创建微服务实例，使用gin暴露http接口并注册到etcd
 	server := web.NewService(
 		web.Name("httpService"),
 		web.Address("127.0.0.1:4000"),
 		//将服务调用实例使用gin处理
-		web.Handler(weblib.NewRouter(userService)),
+		web.Handler(weblib.NewRouter(userService, videoService)),
 		web.Registry(etcdReg),
 		web.RegisterTTL(time.Second*30),
 		web.RegisterInterval(time.Second*15),

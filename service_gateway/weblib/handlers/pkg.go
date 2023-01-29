@@ -21,3 +21,11 @@ func PanicIfTaskError(err error) {
 		panic(err)
 	}
 }
+
+func PanicIfVideoError(err error) {
+	if err != nil {
+		err = errors.New("videoService--" + err.Error())
+		logging.Info(err)
+		panic(err)
+	}
+}
