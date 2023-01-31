@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var DB *gorm.DB
+var Db *gorm.DB
 
 func Init() {
 	var err error
@@ -31,7 +31,7 @@ func Init() {
 
 	dsn := strings.Join([]string{username, ":", password, "@tcp(", addr, ":", port, ")/", database, "?charset=utf8&parseTime=true&loc=Local"}, "")
 
-	DB, err = gorm.Open(mysql.Open(dsn),
+	Db, err = gorm.Open(mysql.Open(dsn),
 		&gorm.Config{
 			PrepareStmt: true,
 			Logger:      gormlogrus,
@@ -40,7 +40,7 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	if err := DB.Use(tracing.NewPlugin()); err != nil {
+	if err := Db.Use(tracing.NewPlugin()); err != nil {
 		panic(err)
 	}
 }
