@@ -4,6 +4,7 @@ CREATE TABLE `likes` (
      `user_id` bigint(20) NOT NULL COMMENT '点赞用户id',
      `video_id` bigint(20) NOT NULL COMMENT '被点赞的视频id',
      `create_time` datetime NOT NULL COMMENT '创建时间',
+     `update_time` datetime NOT NULL COMMENT '更新时间',
      `is_del` tinyint(4) NOT NULL DEFAULT '0' COMMENT '默认点赞为0，取消赞为1',
      PRIMARY KEY (`id`),
      UNIQUE KEY `userIdtoVideoIdIdx` (`user_id`,`video_id`) USING BTREE,

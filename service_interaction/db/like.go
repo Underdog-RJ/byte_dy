@@ -9,11 +9,12 @@ import (
 )
 
 type TbLike struct {
-	ID          int64 `gorm:primaryKey`
-	UserId      int64
-	VideoId     int64
-	CreatedTime time.Time // 在创建时，如果该字段值为零值，则使用当前时间填充
-	IsDel       int8
+	ID         int64 `gorm:"primaryKey"`
+	UserId     int64
+	VideoId    int64
+	CreateTime time.Time `gorm:"autoCreateTime"`
+	UpdateTime time.Time `gorm:"autoUpdateTime"`
+	IsDel      int8
 }
 
 func (t TbLike) TableName() string {
