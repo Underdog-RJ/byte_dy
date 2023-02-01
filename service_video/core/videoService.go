@@ -3,14 +3,23 @@ package core
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+	"path/filepath"
+	"service_video/model"
 	"service_video/services"
 )
 
 func (s *VideoService) UploadVideo(ctx context.Context, request *services.VideoRequest, response *services.VideoResponse) error {
 	response.Code = 200
-	fmt.Println(request.Data)
-	fmt.Println(request.Title)
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Println("file exist error")
+	}
+	fp := dir + "\\" + request.Title
+	ext := filepath.Ext(fp)[1:]
+	fileUrl := model.UploadFile("video", fp, request.Title, ext, true)
+	fmt.Println(fileUrl)
 	return nil
-	//TODO implement me
-	//panic("implement me")
+
 }

@@ -4,11 +4,13 @@ import (
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
+	"service_video/conf"
 	"service_video/core"
 	"service_video/services"
 )
 
 func main() {
+	conf.Init()
 	etcdReg := etcd.NewRegistry(
 		registry.Addrs("159.27.184.52:2379"),
 	)

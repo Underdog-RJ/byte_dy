@@ -14,9 +14,11 @@ func UploadVideo(ginCtx *gin.Context) {
 		fmt.Println("file is null")
 		return
 	}
+
 	fmt.Println(file.Filename)
 	fmt.Println(file.Size)
 	var videoReq services.VideoRequest
+	videoReq.Title = file.Filename
 	PanicIfVideoError(ginCtx.Bind(&videoReq))
 	// 从gin.Key中取出服务实例
 	videoService := ginCtx.Keys["videoService"].(services.VideoService)
