@@ -9,10 +9,8 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"log"
-	"net/url"
 	"os"
 	"strings"
-	"time"
 )
 
 var minioClient *minio.Client
@@ -51,15 +49,10 @@ func GetSnapshot(videoPath, snapshotPath string, frameNum int) (snapshotName str
 	return
 }
 
-func UploadFile(bucketName, filepath, filename, fileExt string, isVideo bool) string {
+func UploadFile(bucketName, filepath, filename, contentType string) string {
 	ctx := context.Background()
-	name, err2 := GetSnapshot(filename, "test", 1)
-	if err2 != nil {
-		fmt.Println(err2)
-	}
-	println(name)
-	file, err := os.Open(filepath)
 
+	file, err := os.Open(filepath)
 	if err != nil {
 		log.Fatalf("current file path is null")
 	}
@@ -70,19 +63,10 @@ func UploadFile(bucketName, filepath, filename, fileExt string, isVideo bool) st
 	if err != nil {
 		log.Fatalf("current file content is null")
 	}
-	// 判断ContentType类型
-	var contentType string
-	if isVideo {
-		contentType = "video/" + fileExt
-	} else {
-		contentType = "image/" + fileExt
-	}
-	// 判断bucket是否存在
-	exists, err := minioClient.BucketExists(ctx, bucketName)
-	if err != nil {
-		log.Fatalf("current bucket exist error")
 
-	}
+	// 判断bucket是否存在
+	exists, _ := minioClient.BucketExists(ctx, bucketName)
+
 	if !exists {
 		minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{})
 	}
@@ -91,35 +75,9 @@ func UploadFile(bucketName, filepath, filename, fileExt string, isVideo bool) st
 	if err != nil {
 		log.Fatalf("current bucket exist error")
 	}
+
 	log.Println("Successfully uploaded bytes: ", n)
-	fileUrl := GetFileUrl(bucketName, filename, fileExt, isVideo)
+	fileUrl := "http://159.27.184.52:8888/video/" + filename
 	log.Println("generate fileUrl success:" + fileUrl)
 	return fileUrl
-}
-
-func GetFileUrl(bucketName, filename, fileExt string, isVideo bool) string {
-	ctx := context.Background()
-	reqParams := make(url.Values)
-	//reqParams	url.Values	额外的响应头，支持
-	//response-expires，  到期时间
-	//response-content-type，  响应内容的类型
-	//response-cache-control，   缓存控制
-	// response-content-disposition。  内容处理 例如，附件形式强制下载"attachment; filename=\"chat.mp4\""
-	// reqParams.Set("response-content-type", "attachment; filename=\"chat.mp4\"")
-	// 判断ContentType类型
-	var contentType string
-	if isVideo {
-		contentType = "video/" + fileExt
-	} else {
-		contentType = "image/" + fileExt
-	}
-	reqParams.Set("response-content-disposition", contentType)
-
-	presignedURL, err := minioClient.PresignedGetObject(ctx, bucketName, filename, time.Hour*24, reqParams)
-	if err != nil {
-		log.Fatal("gengerate url failed...")
-	}
-
-	return presignedURL.String()
-
 }

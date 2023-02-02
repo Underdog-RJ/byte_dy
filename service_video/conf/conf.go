@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gopkg.in/ini.v1"
 	"service_video/model"
+	"strings"
 )
 
 var (
@@ -27,10 +28,10 @@ func Init() {
 	if err != nil {
 		fmt.Println("配置文件读取错误，请检查文件路径:", err)
 	}
-	//LoadMysqlData(file)
-	//path := strings.Join([]string{DbUser, ":", DbPassWord, "@tcp(", DbHost, ":", DbPort, ")/", DbName, "?charset=utf8&parseTime=true"}, "")
-	//fmt.Println(path)
-	//model.Database(path)
+	LoadMysqlData(file)
+	path := strings.Join([]string{DbUser, ":", DbPassWord, "@tcp(", DbHost, ":", DbPort, ")/", DbName, "?charset=utf8&parseTime=true"}, "")
+	fmt.Println(path)
+	model.Database(path)
 	client := LoadMinioData(file)
 	model.Minio(client)
 }
