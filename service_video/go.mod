@@ -9,6 +9,7 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/micro/go-micro/v2 v2.9.1
 	github.com/minio/minio-go/v7 v7.0.47
+	github.com/streadway/amqp v1.0.0
 	github.com/u2takey/ffmpeg-go v0.4.1
 	google.golang.org/protobuf v1.28.1
 	gopkg.in/ini.v1 v1.66.6
