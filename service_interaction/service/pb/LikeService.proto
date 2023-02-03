@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "/service";
+
+import "videoInfo.proto";
+
+// protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=require_unimplemented_servers=false:. --go-grpc_opt=paths=source_relative *.proto
+
+message IsLikeRequest{
+    int64 UserId = 1;
+    int64 VideoId = 2;
+}
+
+message IsLikeResponse{
+    uint32 Code = 1;
+    bool IsLike = 2;
+}
+
+message LikeActionRequest{
+    // @inject_tag: json:"user_id"
+    int64 UserId = 1;
+    // @inject_tag: json:"video_id"
+    int64 VideoId = 2;
+    // @inject_tag: json:"action_tpye"
+    uint32 ActionType = 3;
+}
+
+message LikeActionResponse{
+    uint32 Code = 1;
+}
+
+message LikeListRequest{
+    // @inject_tag: json:"user_id"
+    int64 UserId = 1;
+}
+
+message LikeListResponse{
+    uint32 Code = 1;
+    repeated VideoInfo VideoList = 2;
+}
+
+service LikeService{
+    rpc IsLike(IsLikeRequest) returns (IsLikeResponse);
+    rpc LikeAction(LikeActionRequest) returns (LikeActionResponse);
+    rpc GetLikeList(LikeListRequest) returns (LikeListResponse);
+}

@@ -13,7 +13,7 @@ import (
 
 var Db *gorm.DB
 
-func Init() {
+func InitDB() {
 	var err error
 	gormlogrus := logger.New(
 		logrus.NewWriter(),

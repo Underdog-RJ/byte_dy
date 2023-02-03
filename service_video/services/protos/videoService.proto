@@ -1,6 +1,6 @@
 syntax="proto3";
 package services;
-import "videoModels.proto";
+import "videoInfo.proto";
 option go_package ="./;protos";
 
 message VideoRequest{

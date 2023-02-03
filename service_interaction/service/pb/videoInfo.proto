@@ -1,0 +1,20 @@
+syntax="proto3";
+
+package pb;
+
+option go_package = "/service";
+
+import "userInfo.proto";
+
+message VideoInfo{
+    int64 Id = 1;
+    UserInfo UserInfo = 2;
+    string PlayUrl = 3;
+    string CoverUrl = 4;
+    int64 FavouriteCount = 5;
+    int64 CommentCount = 6;
+    uint32 IsFavorite = 7;
+    string Title = 8;
+}
+
+

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "/service";
+
+message UserInfo{
+    int64 Id = 1;
+    string Name = 2;
+    int64 FollowCount = 3;
+    int64 FollowerCount = 4;
+    uint32 IsFollow = 5;
+}
+

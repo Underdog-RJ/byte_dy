@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.28.1
 // 	protoc        v3.9.1
-// source: videoModels.proto
+// source: videoInfo.proto
 
 package services
 
