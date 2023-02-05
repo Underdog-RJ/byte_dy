@@ -9,3 +9,8 @@ redis:
   addr: 159.27.184.52
   port: 9763
   password: Zhangzhengxu123.
+
+rabbitmq:
+  addr: 159.27.184.52:5672
+  username:
+  password:

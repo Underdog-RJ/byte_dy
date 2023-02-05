@@ -44,7 +44,7 @@ func (t *TbLike) UpdateLike(db *gorm.DB) error {
 }
 
 // GetLikeInfo 获取具体点赞信息
-func (t *TbLike) GetLikeInfo() (TbLike, error) {
+func (t *TbLike) GetLikeInfo() (*TbLike, error) {
 	//创建一条空like结构体，用来存储查询到的信息
 	var likeInfo TbLike
 	//根据userid,videoId查询是否有该条信息，如果有，存储在likeInfo,返回查询结果
@@ -53,13 +53,13 @@ func (t *TbLike) GetLikeInfo() (TbLike, error) {
 	if err != nil {
 		//查询数据为0，打印"can't find data"，返回空结构体，这时候就应该要考虑是否插入这条数据了
 		if "record not found" == err.Error() {
-			return TbLike{}, nil
+			return nil, nil
 		} else {
 			//如果查询数据库失败，返回获取likeInfo信息失败
-			return likeInfo, errors.New("get likeInfo failed")
+			return &likeInfo, errors.New("get likeInfo failed")
 		}
 	}
-	return likeInfo, nil
+	return &likeInfo, nil
 }
 
 // GetLikeVideoIdList 根据用户ID查找喜欢列表
@@ -77,4 +77,19 @@ func (l *TbLike) GetLikeVideoIdList() ([]int64, error) {
 		}
 	}
 	return likeVideoIdList, nil
+}
+
+func (l *TbLike) GetLikeUserIdList() ([]int64, error) {
+	var likeUserIdList []int64
+	err := Db.Model(TbLike{}).Where(map[string]interface{}{"video": l.VideoId, "is_del": util.ISLIKE}).
+		Pluck("user_id", &likeUserIdList).Error
+	if err != nil {
+		if "record not found" == err.Error() {
+			return likeUserIdList, nil
+		} else {
+			//如果查询数据库失败，返回获取likeVideoIdList失败
+			return nil, errors.New("get likeVideoIdList failed")
+		}
+	}
+	return likeUserIdList, nil
 }
