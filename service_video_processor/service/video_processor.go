@@ -32,7 +32,7 @@ func Consumer() {
 			if err != nil {
 				log.Fatalf("%v", err)
 			}
-			ReceiveMediaProcessTask(t.ID)
+			go ReceiveMediaProcessTask(t.ID)
 			fmt.Println("Done")
 			_ = d.Ack(false)
 		}
@@ -53,12 +53,12 @@ func ReceiveMediaProcessTask(id int64) {
 		utils.CreateDir(currentVideoDir)
 	}
 	// 当前文件路径
-	fp := filepath.Join(currentVideoDir, currentVideo.Title)
+	fp := filepath.Join(currentVideoDir, currentVideo.OriginalName)
 	// 判断当前文件是否存在
 	exist, _ := utils.HasDir(fp)
 	if !exist {
 		// 根据 bucket/md5/title从minio获取，并保存到本地
-		remotePath := "/" + md5 + "/" + currentVideo.Title
+		remotePath := "/" + md5 + "/" + currentVideo.OriginalName
 		localPath := fp
 		err := model.FGet(remotePath, localPath)
 		if err != nil {

@@ -19,7 +19,7 @@ var VIDEO_OUTPUT_PATH = "F:"
 func (s *VideoService) UploadVideo(ctx context.Context, request *services.VideoRequest, response *services.VideoResponse) error {
 
 	// 保存到本地
-	currentPath := filepath.Join(VIDEO_OUTPUT_PATH, request.Title)
+	currentPath := filepath.Join(VIDEO_OUTPUT_PATH, request.OriginalName)
 	ioutil.WriteFile(currentPath, request.Data, 777)
 
 	// 文件扩展名
@@ -27,8 +27,8 @@ func (s *VideoService) UploadVideo(ctx context.Context, request *services.VideoR
 	// 获取文件md5
 	md5 := utils.GetFileMD5(currentPath)
 	var currentVideo = &model.Video{}
-	currentVideo.Title = request.Title
-	currentVideo.UserId = 1
+	currentVideo.OriginalName = request.OriginalName
+	currentVideo.UserId = request.UserId
 	if ext == "mp4" {
 		currentVideo.VideoStatus = 1
 	} else {
@@ -37,11 +37,12 @@ func (s *VideoService) UploadVideo(ctx context.Context, request *services.VideoR
 	currentVideo.VideoMd5 = md5
 	currentVideo.VideoExt = ext
 	// 上传原始文件
-	originalFileName := md5 + "/" + request.Title
+	originalFileName := md5 + "/" + request.OriginalName
 	originalFilePath := model.UploadFile("video", currentPath, originalFileName, "video/"+ext)
 	currentVideo.OriginFilePath = originalFilePath
 	currentVideo.PublishTime = time.Now()
 	currentVideo.VideoSize = int64(len(request.Data))
+	currentVideo.Title = request.Title
 	currentVideo.InsertVideo(model.DB)
 
 	// 发送rabbitMQ消息，处理视频
@@ -51,7 +52,8 @@ func (s *VideoService) UploadVideo(ctx context.Context, request *services.VideoR
 		log.Fatalf("video send rabbitmq error")
 	}
 
-	response.Code = 200
+	response.StatusCode = 200
+	response.StatusMsg = "upload video success"
 
 	return nil
 

@@ -8,12 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 )
 
 func UploadVideo(ginCtx *gin.Context) {
 	formFile, err := ginCtx.FormFile("data")
-
 	if err != nil {
 		fmt.Println("file is null")
 		return
@@ -23,14 +21,14 @@ func UploadVideo(ginCtx *gin.Context) {
 		fmt.Println("权限不足")
 		return
 	}
+	title := ginCtx.PostForm("title")
 
 	// 获取用户id
 	parseToken, _ := utils.ParseToken(token)
-	println(int(parseToken.Id))
-	userId := strconv.FormatInt(int64(int(parseToken.Id)), 10)
+
+	userId := parseToken.Id
 
 	file, err := formFile.Open()
-
 	bytes, err := ioutil.ReadAll(file)
 
 	// 关闭文件流
@@ -41,11 +39,13 @@ func UploadVideo(ginCtx *gin.Context) {
 	}
 
 	var videoReq services.VideoRequest
-	videoReq.Title = formFile.Filename
-	videoReq.Token = userId
+	videoReq.OriginalName = formFile.Filename
+	videoReq.UserId = int64(userId)
 	videoReq.Data = bytes
+	videoReq.Title = title
 
 	//PanicIfVideoError(ginCtx.Bind(&videoReq))
+
 	// 从gin.Key中取出服务实例
 	videoService := ginCtx.Keys["videoService"].(services.VideoService)
 	videoResp, err := videoService.UploadVideo(context.Background(), &videoReq)

@@ -18,4 +18,5 @@ type Video struct {
 	VideoExt       string
 	VideoMd5       string
 	OriginFilePath string
+	OriginalName   string
 }

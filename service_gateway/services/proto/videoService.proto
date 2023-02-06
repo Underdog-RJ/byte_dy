@@ -1,17 +1,18 @@
-syntax="proto3";
+syntax = "proto3";
 package services;
-import "videoInfo.proto";
-option go_package ="./;protos";
+import "videoModels.proto";
+option go_package = "./;protos";
 
 message VideoRequest{
-  bytes data =1;
-  string token = 2;
-  string title = 3;
+  bytes Data = 1;
+  int64 UserId = 2;
+  string Title = 3;
+  string OriginalName = 4;
 }
 
 message VideoResponse{
-  VideoModel VideoDetail=1;
-  uint32 Code=2;
+  int64 StatusCode = 1;
+  string StatusMsg = 2;
 }
 
 service VideoService{

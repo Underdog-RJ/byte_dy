@@ -20,6 +20,7 @@ type Video struct {
 	VideoExt       string
 	VideoMd5       string
 	OriginFilePath string
+	OriginalName   string
 }
 
 func (l *Video) InsertVideo(db *gorm.DB) error {
