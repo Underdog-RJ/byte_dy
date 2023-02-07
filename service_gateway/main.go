@@ -1,13 +1,13 @@
 package main
 
 import (
-	"api-gateway/services"
 	"api-gateway/weblib"
 	"api-gateway/wrappers"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
 	"github.com/micro/go-micro/v2/web"
+	"service_common/services"
 	"time"
 )
 

@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"api-gateway/pkg/logging"
 	"errors"
+	"service_common/pkg/logging"
 )
 
 // 包装错误

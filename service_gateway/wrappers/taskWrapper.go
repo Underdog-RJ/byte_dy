@@ -1,15 +1,15 @@
 package wrappers
 
 import (
-	"api-gateway/services"
 	"context"
 	"github.com/afex/hystrix-go/hystrix"
 	"github.com/micro/go-micro/v2/client"
+	services2 "service_common/services"
 	"strconv"
 )
 
-func NewTask(id uint64, name string) *services.TaskModel {
-	return &services.TaskModel{
+func NewTask(id uint64, name string) *services2.TaskModel {
+	return &services2.TaskModel{
 		Id:         id,
 		Title:      name,
 		Content:    "响应超时",
@@ -23,12 +23,12 @@ func NewTask(id uint64, name string) *services.TaskModel {
 
 // 降级函数
 func DefaultTasks(resp interface{}) {
-	models := make([]*services.TaskModel, 0)
+	models := make([]*services2.TaskModel, 0)
 	var i uint64
 	for i = 0; i < 10; i++ {
 		models = append(models, NewTask(i, "降级备忘录"+strconv.Itoa(20+int(i))))
 	}
-	result := resp.(*services.TaskListResponse)
+	result := resp.(*services2.TaskListResponse)
 	result.TaskList = models
 }
 

@@ -5,15 +5,17 @@ go 1.19
 require (
 	github.com/disintegration/imaging v1.6.2
 	github.com/gin-gonic/gin v1.8.2
-	github.com/golang/protobuf v1.5.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/micro/go-micro/v2 v2.9.1
 	github.com/minio/minio-go/v7 v7.0.47
 	github.com/streadway/amqp v1.0.0
 	github.com/u2takey/ffmpeg-go v0.4.1
-	google.golang.org/protobuf v1.28.1
 	gopkg.in/ini.v1 v1.66.6
+)
 
+require (
+	github.com/golang/protobuf v1.5.2 // indirect
+	google.golang.org/protobuf v1.28.1 // indirect
 )
 
 require (
@@ -95,4 +97,7 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	honnef.co/go/tools v0.0.1-2019.2.3 // indirect
+	service_common v0.0.0
 )
+
+replace service_common => ../service_common

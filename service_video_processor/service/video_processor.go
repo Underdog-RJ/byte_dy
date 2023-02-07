@@ -109,6 +109,7 @@ func ReceiveMediaProcessTask(id int64) {
 	}
 	m3u8PlayUrl := "http://159.27.184.52:8888/video/" + md5 + "/hls/" + md5 + ".m3u8"
 	currentVideo.PlayUrl = m3u8PlayUrl
+	currentVideo.VideoStatus = 2
 	// 更新数据库状态 PlayUrl 和 CoverUrl
 	model.DB.Save(currentVideo)
 

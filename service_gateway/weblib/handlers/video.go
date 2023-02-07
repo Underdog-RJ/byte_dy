@@ -1,24 +1,25 @@
 package handlers
 
 import (
-	"api-gateway/pkg/utils"
-	"api-gateway/services"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"service_common/pkg/utils"
+	"service_common/services"
 )
 
 func UploadVideo(ginCtx *gin.Context) {
 	formFile, err := ginCtx.FormFile("data")
 	if err != nil {
-		fmt.Println("file is null")
+		log.Println("file is null")
 		return
 	}
 	token := ginCtx.PostForm("token")
 	if token == "" {
-		fmt.Println("权限不足")
+		log.Println("权限不足")
 		return
 	}
 	title := ginCtx.PostForm("title")

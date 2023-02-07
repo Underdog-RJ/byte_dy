@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+
 	conf.Init()
 	// etcd注册件
 	etcdReg := etcd.NewRegistry(

@@ -4,9 +4,9 @@ import (
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
+	"service_common/services"
 	"service_video/conf"
 	"service_video/core"
-	"service_video/services"
 )
 
 func main() {
