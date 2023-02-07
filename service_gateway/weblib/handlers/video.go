@@ -52,4 +52,9 @@ func UploadVideo(ginCtx *gin.Context) {
 	videoResp, err := videoService.UploadVideo(context.Background(), &videoReq)
 	PanicIfVideoError(err)
 	ginCtx.JSON(http.StatusOK, gin.H{"data": videoResp})
+
+}
+
+func FeedVideo(ginCtx *gin.Context) {
+
 }
