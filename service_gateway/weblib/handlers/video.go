@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"service_common/pkg/utils"
 	"service_common/services"
+	"strconv"
 )
 
 func UploadVideo(ginCtx *gin.Context) {
@@ -56,5 +57,19 @@ func UploadVideo(ginCtx *gin.Context) {
 }
 
 func FeedVideo(ginCtx *gin.Context) {
+	token := ginCtx.PostForm("token")
+	if token == "" {
+		log.Println("未登录")
+	}
+	latest_time := ginCtx.DefaultPostForm("latest_time", "0")
+	videoService := ginCtx.Keys["videoService"].(services.VideoService)
+	var feedReq services.DouyinFeedRequest
+	feedReq.Token = token
+	i, _ := strconv.ParseInt(latest_time, 10, 64)
+	feedReq.LatestTime = i
+	videoResp, err := videoService.FeedVideo(context.Background(), &feedReq)
+
+	PanicIfVideoError(err)
+	ginCtx.JSON(http.StatusOK, gin.H{"status_code": videoResp.GetStatusCode(), "status_msg": videoResp.GetStatusMsg(), "video_list": videoResp.GetVideoList(), "next_time": videoResp.NextTime})
 
 }
