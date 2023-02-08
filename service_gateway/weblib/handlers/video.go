@@ -61,7 +61,7 @@ func FeedVideo(ginCtx *gin.Context) {
 	if token == "" {
 		log.Println("未登录")
 	}
-	latest_time := ginCtx.DefaultPostForm("latest_time", "0")
+	latest_time := ginCtx.DefaultQuery("latest_time", "0")
 	videoService := ginCtx.Keys["videoService"].(services.VideoService)
 	var feedReq services.DouyinFeedRequest
 	feedReq.Token = token
