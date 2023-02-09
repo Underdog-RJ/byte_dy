@@ -22,4 +22,5 @@ message UserResponse{
 service UserService{
   rpc UserLogin(UserRequest) returns(UserResponse);
   rpc UserRegister(UserRequest) returns(UserResponse);
+  rpc UserInfo(UserRequest) returns(UserResponse);
 }

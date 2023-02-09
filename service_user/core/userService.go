@@ -58,3 +58,7 @@ func (*UserService) UserRegister(ctx context.Context, req *services.UserRequest,
 	resp.Code = 0
 	return nil
 }
+func (*UserService) UserInfo(ctx context.Context, req *services.UserRequest, resp *services.UserResponse) error {
+	//model.DB.Select("name, age").Where("name = ?", "lisi").Find(&stu)
+	return nil
+}

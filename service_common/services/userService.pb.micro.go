@@ -44,6 +44,7 @@ func NewUserServiceEndpoints() []*api.Endpoint {
 type UserService interface {
 	UserLogin(ctx context.Context, in *UserRequest, opts ...client.CallOption) (*UserResponse, error)
 	UserRegister(ctx context.Context, in *UserRequest, opts ...client.CallOption) (*UserResponse, error)
+	UserInfo(ctx context.Context, in *UserRequest, opts ...client.CallOption) (*UserResponse, error)
 }
 
 type userService struct {
@@ -77,12 +78,22 @@ func (c *userService) UserRegister(ctx context.Context, in *UserRequest, opts ..
 	}
 	return out, nil
 }
+func (c *userService) UserInfo(ctx context.Context, in *UserRequest, opts ...client.CallOption) (*UserResponse, error) {
+	req := c.c.NewRequest(c.name, "UserService.UserInfo", in)
+	out := new(UserResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
 
 // Server API for UserService service
 
 type UserServiceHandler interface {
 	UserLogin(context.Context, *UserRequest, *UserResponse) error
 	UserRegister(context.Context, *UserRequest, *UserResponse) error
+	UserInfo(context.Context, *UserRequest, *UserResponse) error
 }
 
 func RegisterUserServiceHandler(s server.Server, hdlr UserServiceHandler, opts ...server.HandlerOption) error {
@@ -107,4 +118,8 @@ func (h *userServiceHandler) UserLogin(ctx context.Context, in *UserRequest, out
 
 func (h *userServiceHandler) UserRegister(ctx context.Context, in *UserRequest, out *UserResponse) error {
 	return h.UserServiceHandler.UserRegister(ctx, in, out)
+}
+
+func (h *userServiceHandler) UserInfo(ctx context.Context, in *UserRequest, out *UserResponse) error {
+	return h.UserServiceHandler.UserInfo(ctx, in, out)
 }

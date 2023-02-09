@@ -23,9 +23,9 @@ func NewRouter(service ...interface{}) *gin.Engine {
 		// 用户服务
 		v1.POST("user/register/", handlers.UserRegister)
 		v1.POST("user/login/", handlers.UserLogin)
+		v1.GET("user/", handlers.UserInfo)
 		// 视频流服务
 		v1.GET("/feed/", handlers.FeedVideo)
-
 		// 需要登录保护
 		authed := v1.Group("/publish")
 		authed.Use(middleware.JWT())
