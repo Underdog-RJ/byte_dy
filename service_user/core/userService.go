@@ -3,9 +3,10 @@ package core
 import (
 	"context"
 	"errors"
-	"github.com/jinzhu/gorm"
 	"user/model"
 	"user/services"
+
+	"github.com/jinzhu/gorm"
 )
 
 func BuildUser(item model.User) *services.UserModel {
@@ -18,30 +19,23 @@ func BuildUser(item model.User) *services.UserModel {
 	return &userModel
 }
 
-func (*UserService) UserLogin(ctx context.Context, req *services.UserRequest, resp *services.UserDetailResponse) error {
+func (*UserService) UserLogin(ctx context.Context, req *services.UserRequest, resp *services.UserResponse) error {
 	var user model.User
-	resp.Code = 200
+	resp.Code = 0
 	if err := model.DB.Where("user_name=?", req.UserName).First(&user).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			resp.Code = 400
-			return nil
+			err = errors.New("用户不存在")
 		}
-		resp.Code = 500
-		return nil
+		return err
 	}
 	if user.CheckPassword(req.Password) == false {
-		resp.Code = 400
-		return nil
+		return errors.New("密码错误")
 	}
-	resp.UserDetail = BuildUser(user)
+	resp.ID = uint32(user.ID)
 	return nil
 }
 
-func (*UserService) UserRegister(ctx context.Context, req *services.UserRequest, resp *services.UserDetailResponse) error {
-	if req.Password != req.PasswordConfirm {
-		err := errors.New("两次密码输入不一致")
-		return err
-	}
+func (*UserService) UserRegister(ctx context.Context, req *services.UserRequest, resp *services.UserResponse) error {
 	count := 0
 	if err := model.DB.Model(&model.User{}).Where("user_name=?", req.UserName).Count(&count).Error; err != nil {
 		return err
@@ -60,6 +54,7 @@ func (*UserService) UserRegister(ctx context.Context, req *services.UserRequest,
 	if err := model.DB.Create(&user).Error; err != nil {
 		return err
 	}
-	resp.UserDetail = BuildUser(user)
+	resp.ID = uint32(user.ID)
+	resp.Code = 0
 	return nil
 }

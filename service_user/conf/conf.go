@@ -2,9 +2,10 @@ package conf
 
 import (
 	"fmt"
-	"gopkg.in/ini.v1"
 	"strings"
 	"user/model"
+
+	"gopkg.in/ini.v1"
 )
 
 var (

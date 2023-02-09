@@ -3,12 +3,13 @@ package main
 import (
 	"api-gateway/weblib"
 	"api-gateway/wrappers"
+	"service_common/services"
+	"time"
+
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
 	"github.com/micro/go-micro/v2/web"
-	"service_common/services"
-	"time"
 )
 
 func main() {
@@ -34,7 +35,8 @@ func main() {
 	//创建微服务实例，使用gin暴露http接口并注册到etcd
 	server := web.NewService(
 		web.Name("httpService"),
-		web.Address("127.0.0.1:4000"),
+		//web.Address("127.0.0.1:4000"),
+		web.Address("0.0.0.0:4000"),
 		//将服务调用实例使用gin处理
 		web.Handler(weblib.NewRouter(userService, videoService)),
 		web.Registry(etcdReg),

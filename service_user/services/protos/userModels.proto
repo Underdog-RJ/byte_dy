@@ -1,6 +1,6 @@
 syntax="proto3";
 package services;
-option go_package="./;protos";
+option go_package="./;services";
 
 message UserModel{
     // @inject_tag: json:"id"
