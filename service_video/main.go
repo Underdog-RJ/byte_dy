@@ -20,6 +20,7 @@ func main() {
 		micro.Address("127.0.0.1:8083"),
 		micro.Registry(etcdReg), // etcd注册件
 	)
+
 	// 结构命令行参数，初始化
 	microService.Init()
 	// 服务注册

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/micro/go-micro/v2"
 	"github.com/streadway/amqp"
 	"io/ioutil"
 	"log"
@@ -15,6 +16,14 @@ import (
 )
 
 var VIDEO_OUTPUT_PATH = "F:"
+
+// 用户
+var userMicroService = micro.NewService(
+	micro.Name("userService.client"),
+)
+
+// 用户服务调用实例
+var userService = services.NewUserService("rpcUserService", userMicroService.Client())
 
 func (s *VideoService) UploadVideo(ctx context.Context, request *services.VideoRequest, response *services.VideoResponse) error {
 
@@ -57,6 +66,42 @@ func (s *VideoService) UploadVideo(ctx context.Context, request *services.VideoR
 
 	return nil
 
+}
+
+func BuildVideo(item model.Video) *services.Video {
+
+	videoModel := services.Video{
+		Id:            item.ID,
+		PlayUrl:       item.PlayUrl,
+		CoverUrl:      item.CoverUrl,
+		FavoriteCount: item.FavoriteCount,
+		CommentCount:  item.CommentCount,
+		IsFavorite:    false,
+		Title:         item.Title,
+		Author:        &services.User{Id: 1, Name: "underdog", FollowCount: 1, IsFollow: true, FollowerCount: 1},
+	}
+	return &videoModel
+}
+
+func (c *VideoService) FeedVideo(ctx context.Context, request *services.DouyinFeedRequest, response *services.DouyinFeedResponse) error {
+	s := time.Now().String()
+	if request.LatestTime != 0 {
+		latestTime := request.LatestTime - 8*60*60*1000
+		s = time.UnixMilli(latestTime).String()
+	}
+
+	// 查询N条数据
+	limit10 := model.SelectByTimtLimitCount(model.DB, s, 10)
+	response.StatusCode = 200
+	response.StatusMsg = "获取成功"
+	tmpStr := time.Now().UnixMilli()
+	for _, video := range limit10 {
+		response.VideoList = append(response.VideoList, BuildVideo(video))
+		tmpStr = video.PublishTime.UnixMilli()
+	}
+	response.NextTime = tmpStr
+
+	return nil
 }
 
 // 往rabbitMQ发送消息，处理当前视频

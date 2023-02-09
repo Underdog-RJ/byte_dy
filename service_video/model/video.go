@@ -33,3 +33,10 @@ func (l *Video) InsertVideo(db *gorm.DB) error {
 	}
 	return nil
 }
+
+func SelectByTimtLimitCount(db *gorm.DB, next_time string, limitCount int64) []Video {
+	var videos []Video
+	db.Where("publish_time < ?", next_time).Order("publish_time desc").Limit(limitCount).Find(&videos)
+
+	return videos
+}
