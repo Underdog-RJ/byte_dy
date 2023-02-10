@@ -1,1 +1,0 @@
-[INFO][pkg.go:12]2023/01/27 19:59:41 userService--fallback failed with '{"id":"go.micro.client","code":500,"detail":"Error 1146: Table 'ByteQingXun.user' doesn't exist","status":"Internal Server Error"}'. run error was '{"id":"go.micro.client","code":500,"detail":"Error 1146: Table 'ByteQingXun.user' doesn't exist","status":"Internal Server Error"}'

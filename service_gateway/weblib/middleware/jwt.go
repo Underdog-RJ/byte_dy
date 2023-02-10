@@ -1,35 +1,29 @@
 package middleware
 
 import (
-	"github.com/gin-gonic/gin"
+	"api-gateway/weblib/handlers"
+	"errors"
 	"service_common/pkg/utils"
+
+	"github.com/gin-gonic/gin"
 )
 
 // JWT token验证中间件
 func JWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var code uint32
-
-		code = 200
-		token := c.GetHeader("Authorization")
+		var token string
+		token = c.Query("token")
 		if token == "" {
-			code = 404
-		} else {
-			_, err := utils.ParseToken(token)
-			if err != nil {
-				code = 401
+			token = c.PostForm("token")
+			if token == "" {
+				handlers.PanicIfUserError(errors.New("请先登录"))
 			}
 		}
-		if code != 200 {
-			c.JSON(500, gin.H{
-				"code": code,
-				"msg":  "鉴权失败",
-			})
-
-			c.Abort()
-			return
+		parseToken, err := utils.ParseToken(token)
+		if err != nil {
+			handlers.PanicIfUserError(errors.New("鉴权失败"))
 		}
-
+		c.Set("parseToken", parseToken)
 		c.Next()
 	}
 }
