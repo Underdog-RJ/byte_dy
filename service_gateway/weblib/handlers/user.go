@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -75,8 +76,20 @@ func UserInfo(ginCtx *gin.Context) {
 	user_id := ginCtx.Query("user_id")
 	token := ginCtx.Query("token")
 	my_userid, _ := utils.ParseToken(token)
+	var res bool
 	conn.Raw("select id,user_name,follow_count,follower_count from user where id=?", user_id).Scan(&userinfo)
 	log.Println("??? ", userinfo.User_name, userinfo.ID, user_id, userinfo.Follow_count, userinfo.Follower_count, my_userid.Id, "???")
+	if err2 := conn.Raw("select 1 from follower where follower_id=?&&followee_id=?", user_id, my_userid.Id).First(1).Error; err2 != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			err2 = errors.New("没关注")
+			res = false
+		}
+		log.Println("? ", err2, " ? ")
+	} else {
+		log.Println("? 关注了 ?")
+		res = true
+	}
+
 	ginCtx.JSON(http.StatusOK, gin.H{
 		"status_code": 0,
 		"status_msg":  "用户信息",
@@ -85,7 +98,7 @@ func UserInfo(ginCtx *gin.Context) {
 			"name":           userinfo.User_name,
 			"follow_count":   userinfo.Follow_count,
 			"follower_count": userinfo.Follower_count,
-			"is_follow":      true,
+			"is_follow":      res,
 		},
 	})
 	defer conn.Close()
