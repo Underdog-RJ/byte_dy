@@ -20,6 +20,47 @@ func (l *LikeService) IsLike(ctx context.Context, req *service.IsLikeRequest) (*
 	resp := new(service.IsLikeResponse)
 	resp.Code = util.Success
 
+	if n, err := redis.RdbLike.Exists(ctx, strUserId).Result(); err != nil {
+		resp.IsLike = false
+		resp.Code = util.Error
+		return resp, err
+	} else {
+		if n > 0 {
+			if exist, err1 := redis.RdbLike.SIsMember(ctx, strUserId, req.VideoId).Result(); err1 != nil {
+				resp.IsLike = false
+				resp.Code = util.Error
+				return resp, err
+			} else {
+				resp.IsLike = exist
+				return resp, nil
+			}
+		}
+	}
+	if n, err := redis.RdbLike.Exists(ctx, strVideoId).Result(); err != nil {
+		resp.IsLike = false
+		resp.Code = util.Error
+		return resp, err
+	} else {
+		if n > 0 {
+			if exist, err1 := redis.RdbLike.SIsMember(ctx, strVideoId, req.UserId).Result(); err1 != nil {
+				resp.IsLike = false
+				resp.Code = util.Error
+				return resp, err
+			} else {
+				resp.IsLike = exist
+				return resp, nil
+			}
+		}
+	}
+	likeDao := db.TbLike{UserId: req.UserId, VideoId: req.VideoId}
+	info, err := likeDao.GetLikeInfo()
+	if err != nil {
+		resp.IsLike = false
+		resp.Code = util.Error
+		return resp, err
+	}
+	resp.IsLike = info != nil
+
 	return resp, nil
 }
 

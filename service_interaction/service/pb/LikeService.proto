@@ -34,6 +34,8 @@ message LikeActionResponse{
 message LikeListRequest{
     // @inject_tag: json:"user_id"
     int64 UserId = 1;
+    // @inject_tag: json:"target_user_id"
+    int64 TargetUserId = 2;
 }
 
 message LikeListResponse{

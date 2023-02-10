@@ -6,6 +6,11 @@ const (
 	// 取消点赞操作
 	UNLIKE = 1
 
+	// 评论未删除
+	CommentIsNotDel = 0
+	// 评论已删除
+	CommentIsDel = 1
+
 	// Redis 存储用户喜欢列表的key的前缀
 	LikeUserKey = "LikeUser:"
 	// Redis 存储视频点赞列表的key的前缀
