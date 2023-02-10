@@ -8,6 +8,7 @@ import (
 	"service_common/services"
 
 	"github.com/gin-gonic/gin"
+	//_ "github.com/go-sql-driver/mysql"
 )
 
 // 用户注册
@@ -46,9 +47,26 @@ func UserLogin(ginCtx *gin.Context) {
 	})
 }
 
+type user struct {
+	Id             int    `db:"id" json:"id"`
+	Name           string `db:"name" json:"name"`
+	Follow_count   int    `db:"follow_count" json:"follow_count"`
+	Follower_count int    `db:"follower_count" json:"follower_count"`
+	Is_follow      bool   `db:"is_follow" json:"is_follow"`
+	Token          string `db:"token"`
+}
+
 // 用户信息
 func UserInfo(ginCtx *gin.Context) {
-
+	// conn, err := gorm.Open("mysql", "root:Zhangzhengxu123.@tcp(159.27.184.52:6033)/ByteQingXun")
+	// if err != nil {
+	// 	fmt.Println("gorm.Open err:", err)
+	// 	return
+	// }
+	// defer conn.Close()
+	// var userinfo user
+	// conn.First(&userinfo)
+	// log.Println(userinfo)
 	defer UserPanicHandler(ginCtx)
 	var userReq services.UserRequest
 	PanicIfUserError(ginCtx.Bind(&userReq))
