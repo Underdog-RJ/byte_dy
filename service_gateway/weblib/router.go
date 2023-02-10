@@ -26,6 +26,7 @@ func NewRouter(service ...interface{}) *gin.Engine {
 		v1.GET("user/", handlers.UserInfo)
 		// 视频流服务
 		v1.GET("/feed/", handlers.FeedVideo)
+		v1.GET("publish/list/", handlers.VideoList)
 		// 需要登录保护
 		authed := v1.Group("/publish")
 		authed.Use(middleware.JWT())
