@@ -9,6 +9,6 @@ message UserInfo{
     string Name = 2;
     int64 FollowCount = 3;
     int64 FollowerCount = 4;
-    uint32 IsFollow = 5;
+    bool IsFollow = 5;
 }
 
