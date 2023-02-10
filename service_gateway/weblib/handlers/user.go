@@ -13,7 +13,7 @@ import (
 
 // 用户注册
 func UserRegister(ginCtx *gin.Context) {
-	defer UserPanicHandler(ginCtx)
+	// defer UserPanicHandler(ginCtx)
 	var userReq services.UserRequest
 	PanicIfUserError(ginCtx.Bind(&userReq))
 	// 从gin.Key中取出服务实例
@@ -31,7 +31,7 @@ func UserRegister(ginCtx *gin.Context) {
 
 // 用户登录
 func UserLogin(ginCtx *gin.Context) {
-	defer UserPanicHandler(ginCtx)
+	// defer UserPanicHandler(ginCtx)
 	var userReq services.UserRequest
 	PanicIfUserError(ginCtx.Bind(&userReq))
 	// 从gin.Key中取出服务实例
