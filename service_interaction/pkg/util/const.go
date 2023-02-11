@@ -16,7 +16,7 @@ const (
 	// Redis 存储视频点赞列表的key的前缀
 	LikeVideoKey = "LikeVideo:"
 	// Redis set存储默认值
-	RedisDefaultValue = -1
+	RedisDefaultValue = "-1"
 
 	// 返回错误状态码
 	Error = 500

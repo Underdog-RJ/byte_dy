@@ -9,6 +9,7 @@ import (
 	"interaction/service"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -202,9 +203,70 @@ func addRelationToLike(key string, list []int64) {
 }
 
 func (l *LikeService) GetLikeList(ctx context.Context, req *service.LikeListRequest) (*service.LikeListResponse, error) {
-	strUserId := util.LikeUserKey + strconv.FormatInt(req.UserId, 10)
+	strTarUserId := util.LikeUserKey + strconv.FormatInt(req.TargetUserId, 10)
 	resp := new(service.LikeListResponse)
 	resp.Code = util.Success
 
+	if n, err := redis.RdbLike.Exists(ctx, strTarUserId).Result(); n > 0 {
+		if err != nil {
+			// todo 打印日志
+			resp.Code = util.Error
+			return resp, err
+		}
+		videoIdList, err1 := redis.RdbLike.SMembers(ctx, strTarUserId).Result()
+		if err1 != nil {
+			// todo 打印日志
+			resp.Code = util.Error
+			return resp, err1
+		}
+		// 通过数据库查询videoInfo
+		var wg sync.WaitGroup
+		i := len(videoIdList) - 1
+		favoriteList := make([]*service.VideoInfo, i-1)
+		if i == 0 {
+			resp.VideoList = favoriteList
+			return resp, nil
+		}
+		wg.Add(i)
+		for index, videoId := range videoIdList {
+			if videoId == util.RedisDefaultValue {
+				continue
+			}
+			go addVideoInfoToList(videoId, favoriteList, req.UserId, &wg, index)
+		}
+		wg.Wait()
+		resp.VideoList = favoriteList
+		return resp, nil
+	}
+
 	return resp, nil
+}
+
+// addVideoInfoToList 添加视频信息到列表favoriteList中
+func addVideoInfoToList(strVideoId string, favoriteList []*service.VideoInfo, userId int64, wg *sync.WaitGroup, index int) {
+	defer wg.Done()
+	videoId, _ := strconv.ParseInt(strVideoId, 10, 64)
+	v := new(service.VideoInfo)
+	row := db.Db.Raw("select v.id video_id, u.id user_id, u.user_name, u.follow_count, u.follower_count, v.play_url, v.cover_url ,v.favorite_count, v.comment_count, v.title from video v left join user u on u.id = v.user_id where v.id = ?", videoId).Row()
+	err := row.Scan(&v.Id, &v.UserInfo.Id, v.UserInfo.Name, &v.UserInfo.FollowCount, &v.UserInfo.FollowerCount, &v.PlayUrl, &v.CoverUrl, &v.FavouriteCount, &v.CommentCount, &v.Title)
+	if err != nil {
+		// todo 打印日志
+		return
+	}
+	req := service.IsLikeRequest{UserId: userId, VideoId: videoId}
+	ctx := context.Background()
+	likeService := LikeService{}
+	resp, err := likeService.IsLike(ctx, &req)
+	if err != nil {
+		// todo 打印日志
+		return
+	}
+	v.IsFavorite = resp.IsLike
+	v.UserInfo.IsFollow = false
+	var count int64
+	db.Db.Raw("select count(1) from follower where followee_id = ? and follower_id = ?").Scan(&count)
+	if count > 0 {
+		v.UserInfo.IsFollow = true
+	}
+	favoriteList[index] = v
 }
