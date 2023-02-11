@@ -57,6 +57,18 @@ type User struct {
 	Follow_count    int
 	Follower_count  int
 }
+type Follower struct {
+	Follower_id int
+	Followee_id int
+}
+
+func stringtonum(s string) int {
+	var a int
+	for i := 0; i < len(s); i++ {
+		a = a*10 + int(s[i]) - '0'
+	}
+	return a
+}
 
 // 用户信息
 func UserInfo(ginCtx *gin.Context) {
@@ -67,26 +79,25 @@ func UserInfo(ginCtx *gin.Context) {
 	}
 
 	var userinfo User
-
+	var foller Follower
 	defer UserPanicHandler(ginCtx)
 	var userReq services.UserRequest
 	PanicIfUserError(ginCtx.Bind(&userReq))
 	// 从gin.Key中取出服务实例
 	PanicIfUserError(err)
-	user_id := ginCtx.Query("user_id")
+	user_idstring := ginCtx.Query("user_id")
+	user_id := stringtonum(user_idstring)
 	token := ginCtx.Query("token")
 	my_userid, _ := utils.ParseToken(token)
 	var res bool
 	conn.Raw("select id,user_name,follow_count,follower_count from user where id=?", user_id).Scan(&userinfo)
 	log.Println("??? ", userinfo.User_name, userinfo.ID, user_id, userinfo.Follow_count, userinfo.Follower_count, my_userid.Id, "???")
-	if err2 := conn.Raw("select 1 from follower where follower_id=?&&followee_id=?", user_id, my_userid.Id).First(1).Error; err2 != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			err2 = errors.New("没关注")
-			res = false
-		}
-		log.Println("? ", err2, " ? ")
+	if err2 := conn.Raw("select follower_id,followee_id from follower where follower_id=?&&followee_id=?", user_id, my_userid.Id).First(&foller).Error; err2 != nil {
+		err2 = errors.New("没关注")
+		res = false
+		log.Println("? ", err2, foller, " ? ")
 	} else {
-		log.Println("? 关注了 ?")
+		log.Println("? 关注了", foller, " ?")
 		res = true
 	}
 
