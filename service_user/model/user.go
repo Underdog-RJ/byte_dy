@@ -9,8 +9,8 @@ type User struct {
 	gorm.Model
 	UserName       string `gorm:"unique"`
 	PasswordDigest string
-	Follow_count   int
-	Follower_count int
+	Follow_count   int `gorm:"default:0;"`
+	Follower_count int `gorm:"default:0;"`
 }
 
 const (
