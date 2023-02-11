@@ -3,7 +3,6 @@ package weblib
 import (
 	"api-gateway/weblib/handlers"
 	"api-gateway/weblib/middleware"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/gin-contrib/sessions"
@@ -28,10 +27,10 @@ func NewRouter(service ...interface{}) *gin.Engine {
 		v1.GET("feed/", handlers.FeedVideo)
 		v1.GET("publish/list/", handlers.VideoList)
 		// 需要登录保护
-		authed := v1.Group("/publish")
+		authed := v1.Group("publish")
 		authed.Use(middleware.JWT())
 		{
-			authed.POST("/action", handlers.UploadVideo)
+			authed.POST("/action/", handlers.UploadVideo)
 		}
 	}
 	return ginRouter
