@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -11,6 +12,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 )
 
 func UploadVideo(ginCtx *gin.Context) {
@@ -75,11 +77,14 @@ func FeedVideo(ginCtx *gin.Context) {
 
 }
 
+// 视频列表
 type videolistresponse struct {
 	StatusCode int         `json:"status_code"`
 	StatusMsg  string      `json:"status_msg"`
 	Videolist  []videoinfo `json:"video_list"`
 }
+
+// 视频信息
 type videoinfo struct {
 	ID            int        `json:"id"`
 	Authorinfo    authorinfo `json:"author"`
@@ -90,36 +95,64 @@ type videoinfo struct {
 	IsFavorite    bool       `json:"is_favorite"`
 	Title         string     `json:"title"`
 }
+
+// 作者信息
 type authorinfo struct {
-	ID            int    `json:"id"`
-	Name          string `json:"name"`
-	FollowCount   int    `json:"follow_count"`
-	FollowerCount int    `json:"follower_count"`
-	IsFollow      bool   `json:"is_follow"`
+	Id              int    `json:"id"`
+	User_name       string `gorm:"unique"`
+	Password_Digest string
+	Follow_count    int
+	Follower_count  int
+	Is_follow       bool `json:"is_follow"`
+}
+type likes struct {
+	User_id  int
+	Vider_id int
 }
 
 func VideoList(ginCtx *gin.Context) {
-	user_id := ginCtx.Query("user_id")
-	log.Panicln(user_id)
+	user_idstring := ginCtx.Query("user_id")
+	user_id := stringtonum(user_idstring)
 	token := ginCtx.Query("token")
 	my_userid, _ := utils.ParseToken(token)
-	userinfo := authorinfo{int(my_userid.Id), "user", 1, 1, true}
-	var videolist []videoinfo
-	video := videoinfo{
-		ID:            0,
-		Authorinfo:    userinfo,
-		PlayURL:       "",
-		CoverURL:      "",
-		FavoriteCount: 0,
-		CommentCount:  0,
-		IsFavorite:    false,
-		Title:         "",
+	conn, err := gorm.Open("mysql", "root:Zhangzhengxu123.@tcp(159.27.184.52:6033)/ByteQingXun")
+	if err != nil {
+		fmt.Println("gorm.Open err:", err)
+		return
 	}
-	videolist = append(videolist, video)
+	var author authorinfo
+	var ress bool
+	var foller Follower
+	conn.Raw("select id,user_name,follow_count,follower_count from user where id=?", user_id).Scan(&author)
+	if err2 := conn.Raw("select follower_id,followee_id from follower where follower_id=?&&followee_id=?", user_id, my_userid.Id).First(&foller).Error; err2 != nil {
+		err2 = errors.New("没关注")
+		ress = false
+	} else {
+		ress = true
+	}
+	author.Is_follow = ress
+	log.Println("@@ ", author, " @@")
+
+	var videolist []videoinfo
+	conn.Raw("select id,play_url,cover_url,favorite_count,comment_count,title from video where user_id=?", user_id).Scan(&videolist)
+	for i := 0; i < len(videolist); i++ {
+		videolist[i].Authorinfo = author
+		var islike bool
+		var like likes
+		if err2 := conn.Raw("select user_id,video_id from likes where user_id=?&&video_id=?", user_id, videolist[i].ID).First(&like).Error; err2 != nil {
+			err2 = errors.New("不喜欢")
+			islike = false
+		} else {
+			islike = true
+		}
+		videolist[i].IsFavorite = islike
+		//log.Println(videolist[i].IsFavorite, videolist[i].ID, videolist[i].Authorinfo.Id)
+	}
 	res := videolistresponse{
 		StatusCode: 0,
 		StatusMsg:  "发布列表",
 		Videolist:  videolist,
 	}
 	ginCtx.JSON(200, res)
+	defer conn.Close()
 }
