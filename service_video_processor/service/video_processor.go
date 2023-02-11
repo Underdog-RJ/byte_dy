@@ -10,7 +10,7 @@ import (
 	"service_video_processor/utils"
 )
 
-var VIDEO_OUTPUT_PATH = "F:"
+var VIDEO_OUTPUT_PATH = "/opt/module/video/"
 
 // 处理接收到的消息
 func Consumer() {

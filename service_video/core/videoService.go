@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-var VIDEO_OUTPUT_PATH = "F:"
+var VIDEO_OUTPUT_PATH = "/opt/module/video/"
 
 // 用户
 var userMicroService = micro.NewService(
