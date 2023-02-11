@@ -55,7 +55,7 @@ func UploadVideo(ginCtx *gin.Context) {
 	videoService := ginCtx.Keys["videoService"].(services.VideoService)
 	videoResp, err := videoService.UploadVideo(context.Background(), &videoReq)
 	PanicIfVideoError(err)
-	ginCtx.JSON(http.StatusOK, gin.H{"data": videoResp})
+	ginCtx.JSON(http.StatusOK, gin.H{"status_code": videoResp.GetStatusCode(), "status_msg": videoResp.GetStatusMsg()})
 
 }
 

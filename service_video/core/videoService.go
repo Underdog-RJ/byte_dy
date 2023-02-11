@@ -61,7 +61,7 @@ func (s *VideoService) UploadVideo(ctx context.Context, request *services.VideoR
 		log.Fatalf("video send rabbitmq error")
 	}
 
-	response.StatusCode = 200
+	response.StatusCode = 0
 	response.StatusMsg = "upload video success"
 
 	return nil
