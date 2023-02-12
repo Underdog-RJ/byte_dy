@@ -22,15 +22,25 @@ func NewRouter(service ...interface{}) *gin.Engine {
 		// 用户服务
 		v1.POST("user/register/", handlers.UserRegister)
 		v1.POST("user/login/", handlers.UserLogin)
-		v1.GET("user/", handlers.UserInfo)
 		// 视频流服务
 		v1.GET("feed/", handlers.FeedVideo)
-		v1.GET("publish/list/", handlers.VideoList)
+
 		// 需要登录保护
-		authed := v1.Group("publish")
+		authed := v1.Group("/")
 		authed.Use(middleware.JWT())
 		{
-			authed.POST("/action/", handlers.UploadVideo)
+			// 获取用户信息
+			authed.GET("user/", handlers.UserInfo)
+			// 用户投稿
+			authed.POST("publish/action/", handlers.UploadVideo)
+			// 用户列表信息
+			authed.GET("publish/list/", handlers.VideoList)
+			authed.POST("/relation/action", handlers.Relation.RelationAction)
+			authed.GET("/relation/follow/list", handlers.Relation.RelationFollowList)
+			authed.GET("/relation/follower/list", handlers.Relation.RelationFollowerList)
+			authed.GET("/relation/friend/list", handlers.Relation.RelationFriendList)
+			authed.POST("/message/action", handlers.Relation.MessageAction)
+			authed.GET("/message/chat", handlers.Relation.MessageChat)
 		}
 	}
 	return ginRouter
