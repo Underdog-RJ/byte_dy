@@ -15,6 +15,10 @@ import (
 
 type LikeService struct{}
 
+func NewLikeService() *LikeService {
+	return new(LikeService)
+}
+
 func (l *LikeService) IsLike(ctx context.Context, req *service.IsLikeRequest) (*service.IsLikeResponse, error) {
 	strUserId := util.LikeUserKey + strconv.FormatInt(req.UserId, 10)
 	strVideoId := util.LikeVideoKey + strconv.FormatInt(req.VideoId, 10)
@@ -72,7 +76,6 @@ func (l *LikeService) LikeAction(ctx context.Context, req *service.LikeActionReq
 	strVideoId := util.LikeVideoKey + strconv.FormatInt(req.VideoId, 10)
 	resp := new(service.LikeActionResponse)
 	resp.Code = util.Success
-
 	var likeDao *db.TbLike
 
 	sb := strings.Builder{}

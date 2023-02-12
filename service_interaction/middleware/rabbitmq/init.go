@@ -2,9 +2,7 @@ package rabbitmq
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
-	"strings"
 )
 
 type RabbitMQ struct {
@@ -12,18 +10,15 @@ type RabbitMQ struct {
 	mqurl string
 }
 
+const MQURL = "amqp://hdd:845144591he@127.0.0.1:5672/"
+
 var Rmq *RabbitMQ
 
 // InitRabbitMQ 初始化RabbitMQ的连接和通道。
 func InitRabbitMQ() {
-	addr := viper.GetString("rabbitmq.addr")
-	username := viper.GetString("rabbitmq.username")
-	password := viper.GetString("rabbitmq.password")
-
-	url := strings.Join([]string{"ampq://", username, ":", password, "@", addr, "/"}, "")
 
 	Rmq = &RabbitMQ{
-		mqurl: url,
+		mqurl: MQURL,
 	}
 	dial, err := amqp.Dial(Rmq.mqurl)
 	Rmq.failOnErr(err, "创建连接失败")

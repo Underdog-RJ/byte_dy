@@ -12,29 +12,59 @@ CREATE TABLE `likes` (
      KEY `videoIdx` (`video_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1229 DEFAULT CHARSET=utf8 COMMENT='点赞表';
 
-DROP TABLE IF EXISTS `videos`;
-CREATE TABLE `videos` (
-      `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增主键，视频唯一id',
-      `user_id` bigint(20) NOT NULL COMMENT '视频作者id',
-      `play_url` varchar(255) NOT NULL COMMENT '播放url',
-      `cover_url` varchar(255) NOT NULL COMMENT '封面url',
-      `favorite_count` bigint(20) NOT NULL COMMENT '点赞数量',
-      `comment_count` bigint(20) NOT NULL COMMENT '评论数量',
-      `publish_time` datetime NOT NULL COMMENT '发布时间戳',
-      `title` varchar(255) DEFAULT NULL COMMENT '视频名称',
-      PRIMARY KEY (`id`),
-      KEY `time` (`publish_time`) USING BTREE,
-      KEY `author` (`user_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8 COMMENT='视频表';
+drop TABLE if exists `videos`;
+create table videos
+(
+    id                 bigint auto_increment comment '自增主键，视频唯一id'
+        primary key,
+    user_id            bigint           not null comment '视频作者id',
+    play_url           varchar(255)     null comment '播放url',
+    cover_url          varchar(255)     null comment '封面url',
+    favorite_count     bigint default 0 not null comment '点赞数量',
+    comment_count      bigint default 0 not null comment '评论数量',
+    publish_time       datetime         not null comment '发布时间戳',
+    title              varchar(255)     null comment '视频名称',
+    video_status       int    default 0 null comment '视频状态',
+    video_size         bigint           null,
+    video_md5          varchar(255)     null,
+    video_ext          varchar(255)     null,
+    original_file_path varchar(255)     null
+)
+    comment '视频表' charset = utf8mb3;
 
-DROP TABLE IF EXISTS `comments`;
-CREATE TABLE `comments` (
-        `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '评论id，自增主键',
-        `user_id` bigint(20) NOT NULL COMMENT '评论发布用户id',
-        `video_id` bigint(20) NOT NULL COMMENT '评论视频id',
-        `comment_text` varchar(255) NOT NULL COMMENT '评论内容',
-        `create_time` datetime NOT NULL COMMENT '评论发布时间',
-        `is_del` tinyint(4) NOT NULL DEFAULT '0' COMMENT '默认评论发布为0，取消后为1',
-        PRIMARY KEY (`id`),
-        KEY `videoIdIdx` (`video_id`) USING BTREE COMMENT '评论列表使用视频id作为索引-方便查看视频下的评论列表'
-) ENGINE=InnoDB AUTO_INCREMENT=1206 DEFAULT CHARSET=utf8 COMMENT='评论表';
+create index author
+    on videos (user_id);
+
+create index time
+    on videos (publish_time);
+
+create table users
+(
+    id              int unsigned auto_increment
+        primary key,
+    created_at      datetime     null,
+    updated_at      datetime     null,
+    deleted_at      datetime     null,
+    user_name       varchar(255) null,
+    password_digest varchar(255) null,
+    follow_count    int          null,
+    follower_count  int          null,
+    constraint user_name
+        unique (user_name)
+);
+
+create index idx_users_deleted_at
+    on users (deleted_at);
+
+
+create table follower
+(
+    id          int auto_increment
+        primary key,
+    follower_id int      null comment '被关注的人的id',
+    followee_id int      null comment '关注的人的id',
+    create_time datetime null comment '创建时间',
+    update_time datetime null comment '更新时间'
+);
+
+
