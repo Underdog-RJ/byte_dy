@@ -92,7 +92,7 @@ func (c *VideoService) FeedVideo(ctx context.Context, request *services.DouyinFe
 
 	// 查询N条数据
 	limit10 := model.SelectByTimtLimitCount(model.DB, s, 10)
-	response.StatusCode = 200
+	response.StatusCode = 0
 	response.StatusMsg = "获取成功"
 	tmpStr := time.Now().UnixMilli()
 	for _, video := range limit10 {
