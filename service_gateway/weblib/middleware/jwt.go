@@ -24,6 +24,7 @@ func JWT() gin.HandlerFunc {
 			handlers.PanicIfUserError(errors.New("鉴权失败"))
 		}
 		c.Set("parseToken", parseToken)
+		c.Set("parseUserId", parseToken.Id)
 		c.Next()
 	}
 }

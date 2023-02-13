@@ -1,19 +1,22 @@
 package db
 
 import (
+	"interaction/config"
+	"strings"
+	"time"
+
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/plugin/opentelemetry/logging/logrus"
 	"gorm.io/plugin/opentelemetry/tracing"
-	"strings"
-	"time"
 )
 
 var Db *gorm.DB
 
 func InitDB() {
+	config.InitConfig()
 	var err error
 	gormlogrus := logger.New(
 		logrus.NewWriter(),
@@ -43,4 +46,7 @@ func InitDB() {
 	if err := Db.Use(tracing.NewPlugin()); err != nil {
 		panic(err)
 	}
+
+	Db.Set(`gorm:table_options`, "charset=utf8mb4").
+		AutoMigrate(&Comment{})
 }
