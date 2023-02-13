@@ -1,16 +1,39 @@
+#mysql:
+#  addr: 159.27.184.52
+#  port: 6033
+#  username: root
+#  password: Zhangzhengxu123.
+#  database: ByteQingXun
+#
+#redis:
+#  addr: 159.27.184.52
+#  port: 9763
+#  password: Zhangzhengxu123.
+#
+#rabbitmq:
+#  addr: 159.27.184.52:5672
+#  username: guest
+#  password: Zhangzhengxu123.
+#
+#etcd:
+#  address: 159.27.184.52:2379
+
+server:
+  grpcAddress: 127.0.0.1:8086
+  domain: rpcLikeService
+
 mysql:
-  addr: 159.27.184.52
-  port: 6033
+  addr: 127.0.0.1
+  port: 3306
   username: root
-  password: Zhangzhengxu123.
-  database: ByteQingXun
+  password: 845144591he
+  database: hdd-tiktok-grpc
 
 redis:
-  addr: 159.27.184.52
-  port: 9763
-  password: Zhangzhengxu123.
+  addr: 127.0.0.1
+  port: 6379
+  password: 845144591he
 
-rabbitmq:
-  addr: 159.27.184.52:5672
-  username:
-  password:
+
+etcd:
+  address: 127.0.0.1:2379

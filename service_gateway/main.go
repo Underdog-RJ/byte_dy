@@ -31,13 +31,18 @@ func main() {
 		micro.WrapClient(wrappers.NewUserWrapper),
 	)
 	videoService := services.NewVideoService("rpcVideoService", videoMicroService.Client())
-
+	// 社交
+	socialMicroService := micro.NewService(
+		micro.Name("socialService.client"),
+		micro.WrapClient(wrappers.NewUserWrapper),
+	)
+	socialService := services.NewVideoService("rpcVideoService", socialMicroService.Client())
 	//创建微服务实例，使用gin暴露http接口并注册到etcd
 	server := web.NewService(
 		web.Name("httpService"),
 		web.Address("0.0.0.0:4000"),
 		//将服务调用实例使用gin处理
-		web.Handler(weblib.NewRouter(userService, videoService)),
+		web.Handler(weblib.NewRouter(userService, videoService, socialService)),
 		web.Registry(etcdReg),
 		web.RegisterTTL(time.Second*30),
 		web.RegisterInterval(time.Second*15),
