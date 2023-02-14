@@ -19,9 +19,9 @@ const (
 	RedisDefaultValue = "-1"
 
 	// 返回错误状态码
-	Error = 500
+	Error = 1
 	// 返回正确状态码
-	Success = 200
+	Success = 0
 
 	// 一天的秒数
 	OneDay = 24 * 60 * 60

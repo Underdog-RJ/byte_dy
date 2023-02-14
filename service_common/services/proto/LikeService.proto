@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package pb;
 
-option go_package = "/services";
+option go_package = "/service";
 
 import "videoInfo.proto";
 
-//protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=require_unimplemented_servers=false:. --go-grpc_opt=paths=source_relative *.proto
+// protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=require_unimplemented_servers=false:. --go-grpc_opt=paths=source_relative *.proto
 
 message IsLikeRequest{
     int64 UserId = 1;

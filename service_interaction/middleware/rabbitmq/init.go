@@ -10,7 +10,7 @@ type RabbitMQ struct {
 	mqurl string
 }
 
-const MQURL = "amqp://hdd:845144591he@127.0.0.1:5672/"
+const MQURL = "amqp://guest:Zhangzhengxu123.@127.0.0.1:5672/"
 
 var Rmq *RabbitMQ
 

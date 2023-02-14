@@ -6,7 +6,7 @@ import (
 	"interaction/middleware/rabbitmq"
 	"interaction/middleware/redis"
 	"interaction/pkg/util"
-	"interaction/service"
+	"interaction/service/service"
 	"strconv"
 	"strings"
 	"sync"
@@ -19,41 +19,40 @@ func NewLikeService() *LikeService {
 	return new(LikeService)
 }
 
-func (l *LikeService) IsLike(ctx context.Context, req *service.IsLikeRequest) (*service.IsLikeResponse, error) {
+func (l *LikeService) IsLike(ctx context.Context, req *service.IsLikeRequest, resp *service.IsLikeResponse) error {
 	strUserId := util.LikeUserKey + strconv.FormatInt(req.UserId, 10)
 	strVideoId := util.LikeVideoKey + strconv.FormatInt(req.VideoId, 10)
-	resp := new(service.IsLikeResponse)
 	resp.Code = util.Success
 
 	if n, err := redis.RdbLike.Exists(ctx, strUserId).Result(); err != nil {
 		resp.IsLike = false
 		resp.Code = util.Error
-		return resp, err
+		return err
 	} else {
 		if n > 0 {
 			if exist, err1 := redis.RdbLike.SIsMember(ctx, strUserId, req.VideoId).Result(); err1 != nil {
 				resp.IsLike = false
 				resp.Code = util.Error
-				return resp, err
+				return err
 			} else {
 				resp.IsLike = exist
-				return resp, nil
+				return nil
 			}
 		}
 	}
 	if n, err := redis.RdbLike.Exists(ctx, strVideoId).Result(); err != nil {
 		resp.IsLike = false
 		resp.Code = util.Error
-		return resp, err
+		return err
 	} else {
 		if n > 0 {
 			if exist, err1 := redis.RdbLike.SIsMember(ctx, strVideoId, req.UserId).Result(); err1 != nil {
 				resp.IsLike = false
 				resp.Code = util.Error
-				return resp, err
+				return err
 			} else {
 				resp.IsLike = exist
-				return resp, nil
+				return nil
 			}
 		}
 	}
@@ -62,19 +61,18 @@ func (l *LikeService) IsLike(ctx context.Context, req *service.IsLikeRequest) (*
 	if err != nil {
 		resp.IsLike = false
 		resp.Code = util.Error
-		return resp, err
+		return err
 	}
 	resp.IsLike = info != nil
 
-	return resp, nil
+	return nil
 }
 
 // 执行点赞或取消点赞操作
-func (l *LikeService) LikeAction(ctx context.Context, req *service.LikeActionRequest) (*service.LikeActionResponse, error) {
+func (l *LikeService) LikeAction(ctx context.Context, req *service.LikeActionRequest, resp *service.LikeActionResponse) error {
 
 	strUserId := util.LikeUserKey + strconv.FormatInt(req.UserId, 10)
 	strVideoId := util.LikeVideoKey + strconv.FormatInt(req.VideoId, 10)
-	resp := new(service.LikeActionResponse)
 	resp.Code = util.Success
 	var likeDao *db.TbLike
 
@@ -90,11 +88,11 @@ func (l *LikeService) LikeAction(ctx context.Context, req *service.LikeActionReq
 			//如果有问题，说明查询redis失败,返回错误信息
 			if err != nil {
 				resp.Code = util.Error
-				return resp, err
+				return err
 			}
 			if _, err1 := redis.RdbLike.SAdd(ctx, strUserId, req.VideoId).Result(); err1 != nil {
 				resp.Code = util.Error
-				return resp, err1
+				return err1
 			}
 		} else {
 			likeDao = &db.TbLike{UserId: req.UserId, VideoId: req.VideoId, IsDel: int8(req.ActionType)}
@@ -109,11 +107,11 @@ func (l *LikeService) LikeAction(ctx context.Context, req *service.LikeActionReq
 		if n, err := redis.RdbLike.Exists(ctx, strVideoId).Result(); n > 0 {
 			if err != nil {
 				resp.Code = util.Error
-				return resp, err
+				return err
 			}
 			if _, err1 := redis.RdbLike.SAdd(ctx, strVideoId, req.UserId).Result(); err1 != nil {
 				resp.Code = util.Error
-				return resp, err1
+				return err1
 			}
 		} else {
 			if likeDao == nil {
@@ -135,11 +133,11 @@ func (l *LikeService) LikeAction(ctx context.Context, req *service.LikeActionReq
 			//如果有问题，说明查询redis失败,返回错误信息
 			if err != nil {
 				resp.Code = util.Error
-				return resp, err
+				return err
 			}
 			if _, err1 := redis.RdbLike.SRem(ctx, strUserId, req.VideoId).Result(); err1 != nil {
 				resp.Code = util.Error
-				return resp, err1
+				return err1
 			}
 		} else {
 			likeDao = &db.TbLike{UserId: req.UserId, VideoId: req.VideoId, IsDel: int8(req.ActionType)}
@@ -158,11 +156,11 @@ func (l *LikeService) LikeAction(ctx context.Context, req *service.LikeActionReq
 		if n, err := redis.RdbLike.Exists(ctx, strVideoId).Result(); n > 0 {
 			if err != nil {
 				resp.Code = util.Error
-				return resp, err
+				return err
 			}
 			if _, err1 := redis.RdbLike.SRem(ctx, strVideoId, req.UserId).Result(); err1 != nil {
 				resp.Code = util.Error
-				return resp, err1
+				return err1
 			}
 		} else {
 			if likeDao == nil {
@@ -182,7 +180,7 @@ func (l *LikeService) LikeAction(ctx context.Context, req *service.LikeActionReq
 		// 向消息队列发送消息
 		rabbitmq.RmqUnLike.Publish(sb.String())
 	}
-	return resp, nil
+	return nil
 }
 
 // 将视频的点赞信息写入Redis
@@ -205,22 +203,21 @@ func addRelationToLike(key string, list []int64) {
 	}
 }
 
-func (l *LikeService) GetLikeList(ctx context.Context, req *service.LikeListRequest) (*service.LikeListResponse, error) {
+func (l *LikeService) GetLikeList(ctx context.Context, req *service.LikeListRequest, resp *service.LikeListResponse) error {
 	strTarUserId := util.LikeUserKey + strconv.FormatInt(req.TargetUserId, 10)
-	resp := new(service.LikeListResponse)
 	resp.Code = util.Success
 
 	if n, err := redis.RdbLike.Exists(ctx, strTarUserId).Result(); n > 0 {
 		if err != nil {
 			// todo 打印日志
 			resp.Code = util.Error
-			return resp, err
+			return err
 		}
 		videoIdList, err1 := redis.RdbLike.SMembers(ctx, strTarUserId).Result()
 		if err1 != nil {
 			// todo 打印日志
 			resp.Code = util.Error
-			return resp, err1
+			return err1
 		}
 		// 通过数据库查询videoInfo
 		var wg sync.WaitGroup
@@ -228,7 +225,7 @@ func (l *LikeService) GetLikeList(ctx context.Context, req *service.LikeListRequ
 		favoriteList := make([]*service.VideoInfo, i-1)
 		if i == 0 {
 			resp.VideoList = favoriteList
-			return resp, nil
+			return nil
 		}
 		wg.Add(i)
 		for index, videoId := range videoIdList {
@@ -239,10 +236,10 @@ func (l *LikeService) GetLikeList(ctx context.Context, req *service.LikeListRequ
 		}
 		wg.Wait()
 		resp.VideoList = favoriteList
-		return resp, nil
+		return nil
 	}
 
-	return resp, nil
+	return nil
 }
 
 // addVideoInfoToList 添加视频信息到列表favoriteList中
@@ -259,7 +256,8 @@ func addVideoInfoToList(strVideoId string, favoriteList []*service.VideoInfo, us
 	req := service.IsLikeRequest{UserId: userId, VideoId: videoId}
 	ctx := context.Background()
 	likeService := LikeService{}
-	resp, err := likeService.IsLike(ctx, &req)
+	resp := service.IsLikeResponse{}
+	err = likeService.IsLike(ctx, &req, &resp)
 	if err != nil {
 		// todo 打印日志
 		return

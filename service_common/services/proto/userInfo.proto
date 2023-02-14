@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package pb;
 
-option go_package = "/services";
+option go_package = "/service";
 
 message UserInfo{
     int64 Id = 1;

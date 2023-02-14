@@ -41,6 +41,7 @@ func NewRouter(service ...interface{}) *gin.Engine {
 			authed.GET("/relation/friend/list", handlers.Relation.RelationFriendList)
 			authed.POST("/message/action", handlers.Relation.MessageAction)
 			authed.GET("/message/chat", handlers.Relation.MessageChat)
+			authed.POST("/favorite/action", handlers.LikeAction)
 		}
 	}
 	return ginRouter
