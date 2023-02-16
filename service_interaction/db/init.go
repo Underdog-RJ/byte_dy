@@ -1,7 +1,6 @@
 package db
 
 import (
-	"interaction/config"
 	"strings"
 	"time"
 
@@ -16,7 +15,6 @@ import (
 var Db *gorm.DB
 
 func InitDB() {
-	config.InitConfig()
 	var err error
 	gormlogrus := logger.New(
 		logrus.NewWriter(),

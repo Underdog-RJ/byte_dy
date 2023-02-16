@@ -33,6 +33,14 @@ func PanicIfVideoError(err error) {
 	}
 }
 
+func PanicIfCommentError(err error) {
+	if err != nil {
+		err = errors.New("commentService--" + err.Error())
+		logging.Info(err)
+		panic(err)
+	}
+}
+
 func UserPanicHandler(ginCtx *gin.Context) {
 	if err := recover(); err != nil {
 		ginCtx.JSON(http.StatusOK, gin.H{

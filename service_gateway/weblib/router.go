@@ -3,6 +3,7 @@ package weblib
 import (
 	"api-gateway/weblib/handlers"
 	"api-gateway/weblib/middleware"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/gin-contrib/sessions"
@@ -42,6 +43,7 @@ func NewRouter(service ...interface{}) *gin.Engine {
 			authed.POST("/message/action", handlers.Relation.MessageAction)
 			authed.GET("/message/chat", handlers.Relation.MessageChat)
 			authed.POST("/favorite/action", handlers.LikeAction)
+			authed.POST("/comment/action", handlers.CommentAction)
 		}
 	}
 	return ginRouter

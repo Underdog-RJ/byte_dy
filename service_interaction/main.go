@@ -2,16 +2,17 @@ package main
 
 import (
 	"fmt"
-	"github.com/micro/go-micro/v2"
-	"github.com/micro/go-micro/v2/registry"
-	"github.com/micro/go-micro/v2/registry/etcd"
-	"github.com/spf13/viper"
 	"interaction/config"
 	"interaction/db"
 	"interaction/handle"
 	"interaction/middleware/rabbitmq"
 	"interaction/middleware/redis"
 	"interaction/service/service"
+
+	"github.com/micro/go-micro/v2"
+	"github.com/micro/go-micro/v2/registry"
+	"github.com/micro/go-micro/v2/registry/etcd"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -41,6 +42,7 @@ func main() {
 	microService.Init()
 	// 服务注册
 	service.RegisterLikeServiceHandler(microService.Server(), new(handle.LikeService))
+	service.RegisterCommentServiceHandler(microService.Server(), new(handle.CommentService))
 	// 启动微服务
 	_ = microService.Run()
 }

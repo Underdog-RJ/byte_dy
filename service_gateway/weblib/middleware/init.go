@@ -16,6 +16,7 @@ func InitMiddleware(service []interface{}) gin.HandlerFunc {
 		context.Keys["videoService"] = service[2]
 		context.Keys["socialService"] = service[3]
 		context.Keys["likeService"] = service[4]
+		context.Keys["commentService"] = service[5]
 		context.Next()
 	}
 }
