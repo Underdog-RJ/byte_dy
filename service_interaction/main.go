@@ -22,10 +22,10 @@ func main() {
 	rabbitmq.InitLikeRabbitMQ()
 	fmt.Println("init success")
 
-	etcdAddr := viper.GetString("etcd.addr")
+	//etcdAddr := viper.GetString("etcd.addr")
 
 	etcdReg := etcd.NewRegistry(
-		registry.Addrs(etcdAddr),
+		registry.Addrs("159.27.184.52:2379"),
 	)
 	serviceName := viper.GetString("server.domain")
 	serviceAddr := viper.GetString("server.addr")
