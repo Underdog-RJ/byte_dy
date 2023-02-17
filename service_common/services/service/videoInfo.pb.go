@@ -4,7 +4,7 @@
 // 	protoc        v3.15.8
 // source: videoInfo.proto
 
-package services
+package service
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
