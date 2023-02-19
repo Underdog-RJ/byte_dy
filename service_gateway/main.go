@@ -4,6 +4,7 @@ import (
 	"api-gateway/weblib"
 	"api-gateway/wrappers"
 	"service_common/services"
+	"service_common/services/service"
 	"time"
 
 	"github.com/micro/go-micro/v2"
@@ -42,9 +43,8 @@ func main() {
 		micro.Name("interactionService.client"),
 		micro.WrapClient(wrappers.NewUserWrapper),
 	)
-	likeService := services.NewLikeService("rpcInteractionService", interactionMicroService.Client())
-	commentService := services.NewCommentService("rpcInteractionService", interactionMicroService.Client())
-
+	likeService := service.NewLikeService("rpcInteractionService", interactionMicroService.Client())
+	commentService := service.NewCommentService("rpcInteractionService", interactionMicroService.Client())
 	//创建微服务实例，使用gin暴露http接口并注册到etcd
 	server := web.NewService(
 		web.Name("httpService"),

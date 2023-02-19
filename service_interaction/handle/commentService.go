@@ -5,7 +5,7 @@ import (
 	"errors"
 	"interaction/db"
 	"interaction/pkg/util"
-	services "interaction/service/service"
+	"interaction/service/service"
 )
 
 type CommentService struct{}
@@ -14,7 +14,7 @@ func NewCommentService() *CommentService {
 	return new(CommentService)
 }
 
-func (c *CommentService) CommentAction(ctx context.Context, req *services.CommentRequest, resp *services.CommentResponse) error {
+func (c *CommentService) CommentAction(ctx context.Context, req *service.CommentRequest, resp *service.CommentResponse) error {
 	var err error
 	userId := req.UserId
 	videoId := req.VideoId
@@ -41,14 +41,14 @@ func (c *CommentService) CommentAction(ctx context.Context, req *services.Commen
 		}
 
 		userInfo := db.UserInfo(userId)
-		user := &services.User{
+		user := &service.User{
 			Id:            userId,
 			Name:          userInfo.UserName,
 			FollowCount:   int64(userInfo.Follow_count),
 			FollowerCount: int64(userInfo.Follower_count),
 			IsFollow:      true,
 		}
-		respComment := &services.Comment{
+		respComment := &service.Comment{
 			Id:         comment.Id,
 			User:       user,
 			Content:    comment.CommentText,
