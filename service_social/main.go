@@ -14,6 +14,7 @@ func main() {
 	etcdReg := etcd.NewRegistry(
 		registry.Addrs("159.27.184.52:2379"),
 	)
+
 	// 得到一个微服务实例
 	microService := micro.NewService(
 		micro.Name("rpcSocialService"), // 微服务名字

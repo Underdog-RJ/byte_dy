@@ -1,5 +1,6 @@
 syntax = "proto3";
 package services;
+import "videoService.proto";
 option go_package = "./;protos";
 
 message douyin_relation_action_request {
@@ -31,13 +32,7 @@ message douyin_relation_follow_list_response {
   repeated User user_list = 3; // 用户信息列表
 }
 
-message User {
-  int64 id = 1; // 用户id
-  string name = 2; // 用户名称
-  int64 follow_count = 3; // 关注总数
-  int64 follower_count = 4; // 粉丝总数
-  bool is_follow = 5; // true-已关注，false-未关注
-}
+
 
 message douyin_relation_follower_list_request {
   int64 user_id = 1; // 用户id
@@ -77,7 +72,7 @@ message douyin_message_chat_request {
 message douyin_message_chat_response {
    int32 status_code = 1; // 状态码，0-成功，其他值-失败
    string status_msg = 2; // 返回状态描述
-   Message message_list = 3; // 消息列表
+   repeated Message message_list = 3; // 消息列表
 }
 
 message Message {

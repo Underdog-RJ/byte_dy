@@ -8,9 +8,10 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/micro/go-micro/v2 v2.9.1
 )
+
 replace service_common => ../service_common
+
 require (
-	service_common v0.0.0
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/bitly/go-simplejson v0.5.0 // indirect
 	github.com/coreos/etcd v3.3.18+incompatible // indirect
@@ -31,7 +32,7 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/gogo/protobuf v1.2.1 // indirect
-	github.com/golang/protobuf v1.5.0 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hpcloud/tail v1.0.0 // indirect
@@ -80,4 +81,5 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	honnef.co/go/tools v0.0.1-2019.2.3 // indirect
+	service_common v0.0.0
 )

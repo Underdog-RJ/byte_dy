@@ -43,7 +43,7 @@ func (r *relation) RelationFollowList(ginCtx *gin.Context) {
 	socialService := ginCtx.Keys["socialService"].(services.SocialService)
 	socialResp, _ := socialService.RelationFollowList(context.Background(), &socialReq)
 
-	ginCtx.JSON(200, gin.H{"status_code": socialResp.GetStatusCode(), "status_msg": socialResp.GetStatusMsg()})
+	ginCtx.JSON(200, gin.H{"status_code": socialResp.GetStatusCode(), "status_msg": socialResp.GetStatusMsg(), "user_list": socialResp.UserList})
 }
 
 // 粉丝列表
@@ -58,7 +58,7 @@ func (r *relation) RelationFollowerList(ginCtx *gin.Context) {
 	socialService := ginCtx.Keys["socialService"].(services.SocialService)
 	socialResp, _ := socialService.RelationFollowerList(context.Background(), &socialReq)
 
-	ginCtx.JSON(200, gin.H{"status_code": socialResp.GetStatusCode(), "status_msg": socialResp.GetStatusMsg()})
+	ginCtx.JSON(200, gin.H{"status_code": socialResp.GetStatusCode(), "status_msg": socialResp.GetStatusMsg(), "user_list": socialResp.UserList})
 }
 
 // 好友列表
